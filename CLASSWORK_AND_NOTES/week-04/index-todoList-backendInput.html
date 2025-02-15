@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input id="taskTitle" placeholder="Title" /><br /><br />
+    <input id="taskDescription" placeholder="Description" /><br /><br />
+    <button onclick="addTodo()">Add Todo</button>
+    <div id="todoList"></div>
+
+    <!-- JAVSCRIPT CODE -->
+
+    <script>
+      let globalId = 0;
+      function markAsDone(button) {
+        button.textContent = "Done!";
+        const currentTask = button.parentNode;
+        currentTask.style.textDecoration = "line-through";
+      }
+      function createChild(title, description, id) {
+        const taskDiv = document.createElement("div");
+        const titleNode = document.createTextNode(title);
+        const descriptionNode = document.createTextNode(description);
+
+        
+
+        const doneButton = document.createElement("button");
+        doneButton.setAttribute("onclick", "markAsDone(this)");
+        const buttonText = document.createTextNode("Mark As Done");
+        doneButton.appendChild(buttonText);
+
+        taskDiv.appendChild(titleNode);
+        taskDiv.appendChild(document.createElement("br"));
+        taskDiv.appendChild(descriptionNode);
+        taskDiv.appendChild(document.createElement("br"));
+        taskDiv.appendChild(doneButton);
+        taskDiv.appendChild(document.createElement("br"));
+        taskDiv.setAttribute("id", id);
+        return taskDiv;
+      }
+      function addTodo() {
+        const title = document.getElementById("taskTitle").value;
+        const description = document.getElementById("taskDescription").value;
+        const element = document.getElementById("todoList");
+        element.appendChild(createChild(title, description, globalId++));
+        // globalId++;
+      }
+      function updateTodos(state) {
+        let parent = document.getElementById("todoList");
+        parent.innerHTML = "";
+        for (let i = 0; i < state.length; i++) {
+          const innerDiv = createChild(state[i].title, state[i].description, state[i].id);
+          parent.appendChild(innerDiv);
+        }
+      }
+      window.setInterval(async function () {
+        const response = await fetch("https://sum-server.100xdevs.com/todos");
+        const json = await response.json();
+        updateTodos(json.todos);
+      },5000);
+      
+    </script>
+  </body>
+</html>

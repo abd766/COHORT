@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        let timeout = 0;
+        function debouncerCalculateResult(){
+            clearTimeout(timeout);
+            timeout = setTimeout(calculateResult,1000);
+        }
+        async function calculateResult(){
+            const principalAmount = parseInt(document.getElementById("principalAmount").value);
+            const rateOfInterest = parseInt(document.getElementById("rateOfInterest").value);
+            const timePeriod = parseInt(document.getElementById("timePeriod").value);
+            const element = document.getElementById("calculateFinal");
+            const response = await fetch("https://sum-server.100xdevs.com/interest?principal=" + principalAmount + "&rate=" + rateOfInterest + "&time=" + timePeriod);
+            const result = await response.text()
+            element.innerHTML = result;
+        }
+    </script>
+</head>
+<body>
+    <input oninput="debouncerCalculateResult()" id="principalAmount" placeholder="Principal Amount"><br><br>
+    <input oninput="debouncerCalculateResult()" id="rateOfInterest" placeholder="Rate Of Interest"><br><br>
+    <input oninput="debouncerCalculateResult()" id="timePeriod" placeholder="Time Period"><br><br>
+    <div id="calculateFinal"></div>
+</body>
+</html>
